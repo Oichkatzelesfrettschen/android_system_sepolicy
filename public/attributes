@@ -51,6 +51,10 @@ attribute system_file_type;
 # All types in /vendor
 attribute vendor_file_type;
 
+# A vendor library carrying DT_TEXTREL that a vendor domain may relocate with
+# execmod. domain.te bounds it to vendor_file_type and keeps coredomain off it.
+attribute textrel_vendor_lib_file;
+
 # All types used for procfs files.
 attribute proc_type;
 expandattribute proc_type false;

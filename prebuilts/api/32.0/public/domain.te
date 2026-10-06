@@ -1105,6 +1105,7 @@ neverallow * {
   -apk_data_file
   -app_data_file
   -asec_public_file
+  -textrel_vendor_lib_file
 }:file execmod;
 
 # Do not allow making the stack or heap executable.
@@ -1114,7 +1115,13 @@ neverallow * self:process { execstack execheap };
 
 # Do not allow the introduction of new execmod rules. Text relocations
 # and modification of executable pages are unsafe.
-neverallow { domain -untrusted_app_25 -untrusted_app_27 } file_type:file execmod;
+neverallow { domain -untrusted_app_25 -untrusted_app_27 } { file_type -textrel_vendor_lib_file }:file execmod;
+
+# textrel_vendor_lib_file marks a vendor library that carries DT_TEXTREL, which
+# the linker relocates by remapping its text writable. The exemption above
+# covers only vendor files, and platform processes never take execmod on them.
+neverallow * { textrel_vendor_lib_file -vendor_file_type }:file execmod;
+neverallow coredomain textrel_vendor_lib_file:file execmod;
 
 neverallow { domain -init } proc:{ file dir } mounton;
 
